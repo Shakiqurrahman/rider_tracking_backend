@@ -47,7 +47,7 @@ app.get("/health/live", (_req, res) => {
 
 app.get("/", (_req, res) => {
   res.status(200).json({
-    message: "Hello from Rider Maintenance App",
+    message: "Hello from Rider Tracking App",
   });
 });
 
