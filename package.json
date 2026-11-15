@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "Riding tracking app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Riding tracking app",
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
