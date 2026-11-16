@@ -36,7 +36,6 @@ model Rider {
   telephone        String?
   status           RIDER_STATUS              @default(ACTIVE)
 
-  ridingAccount RidingAccount? @relation("RiderCurrentAccount")
   riderAssignments RidingAccountAssignment[]
   createdAt        DateTime                  @default(now()) @onCreate(now())
   updatedAt        temporal.UpdatedAt
@@ -57,7 +56,6 @@ model RidingAccount {
   status           RIDING_ACCOUNT_STATUS     @default(ACTIVE)
   riderId          Uuid?                   @unique
   rider   Rider? @relation(
-  "RiderCurrentAccount",
   fields: [riderId],
   references: [id],
   onDelete: Restrict
@@ -72,7 +70,7 @@ model RidingAccountAssignment {
   id              Uuid               @id @onCreate(uuid())
   ridingAccountId String
   ridingAccount   RidingAccount      @relation(fields: [ridingAccountId], references: [id], onDelete: Restrict)
-  riderId         String
+  riderId         Uuid
   rider           Rider              @relation(fields: [riderId], references: [id], onDelete: Restrict)
 
   assignedAt      DateTime           @default(now())
