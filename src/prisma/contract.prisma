@@ -68,7 +68,7 @@ model RidingAccount {
 
 model RidingAccountAssignment {
   id              Uuid               @id @onCreate(uuid())
-  ridingAccountId String
+  ridingAccountId Uuid
   ridingAccount   RidingAccount      @relation(fields: [ridingAccountId], references: [id], onDelete: Restrict)
   riderId         Uuid
   rider           Rider              @relation(fields: [riderId], references: [id], onDelete: Restrict)
