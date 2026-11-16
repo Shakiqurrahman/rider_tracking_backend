@@ -1,21 +1,86 @@
 // use prisma-8
-
-model User {
-  id        Int                @id @default(autoincrement())
-  email     String             @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt DateTime           @default(now()) @onCreate(now())
-  updatedAt temporal.UpdatedAt
+enum USER_ROLE {
+  ADMIN
+  USER
 }
 
-model Post {
-  id        Int                @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User               @relation(fields: [authorId], references: [id])
-  authorId  Int
+enum RIDER_STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+enum RIDING_ACCOUNT_STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id        Uuid               @id @onCreate(uuid())
+  name      String
+  username  String             @unique
+  email     String             @unique
+  password  String
+  isDeleted Boolean            @default(false)
+  role      USER_ROLE          @default(USER)
+
+  rider     Rider?
   createdAt DateTime           @default(now()) @onCreate(now())
   updatedAt temporal.UpdatedAt
+
+  @@index([role])
+}
+
+model Rider {
+  id               Uuid                      @id
+  user             User                      @relation(fields: [id], references: [id], onDelete: Restrict)
+  telephone        String?
+  status           RIDER_STATUS              @default(ACTIVE)
+
+  ridingAccount RidingAccount? @relation("RiderCurrentAccount")
+  riderAssignments RidingAccountAssignment[]
+  createdAt        DateTime                  @default(now()) @onCreate(now())
+  updatedAt        temporal.UpdatedAt
+
+  @@index([status])
+}
+
+model RidingAccount {
+  id               Uuid                      @id @onCreate(uuid())
+  name             String
+  accountEmail     String
+  accountPassword  String
+  deputyEmail      String
+  deputyPassword   String
+  documentNumber   String
+  telephone        String?
+  notes            String?
+  status           RIDING_ACCOUNT_STATUS     @default(ACTIVE)
+  riderId          Uuid?                   @unique
+  rider   Rider? @relation(
+  "RiderCurrentAccount",
+  fields: [riderId],
+  references: [id],
+  onDelete: Restrict
+)
+  riderAssignments RidingAccountAssignment[]
+
+  createdAt        DateTime                  @default(now()) @onCreate(now())
+  updatedAt        temporal.UpdatedAt
+}
+
+model RidingAccountAssignment {
+  id              Uuid               @id @onCreate(uuid())
+  ridingAccountId String
+  ridingAccount   RidingAccount      @relation(fields: [ridingAccountId], references: [id], onDelete: Restrict)
+  riderId         String
+  rider           Rider              @relation(fields: [riderId], references: [id], onDelete: Restrict)
+
+  assignedAt      DateTime           @default(now())
+  unassignedAt    DateTime?
+
+  createdAt       DateTime           @default(now()) @onCreate(now())
+  updatedAt       temporal.UpdatedAt
+
+  @@index([ridingAccountId, assignedAt])
+  @@index([riderId, assignedAt])
 }
