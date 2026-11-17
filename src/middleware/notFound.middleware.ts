@@ -1,14 +1,13 @@
-import type {
-  Request,
-  Response,
-} from "express";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
+import type { RequestHandler } from 'express';
+import httpStatus from 'http-status';
 
-export const notFoundHandler = (
-  req: Request,
-  res: Response
-) => {
-  res.status(404).json({
-    success: false,
-    message: `Route ${req.method} ${req.path} not found`,
-  });
+const notFoundHandler: RequestHandler = (req, res, next) => {
+    res.status(httpStatus.NOT_FOUND).json({
+        success: false,
+        message: 'Api endpoint not found!',
+    });
 };
+
+export default notFoundHandler;

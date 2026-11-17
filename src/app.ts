@@ -8,7 +8,7 @@ import { env } from "./config/config";
 import { logger } from "./utils/logger";
 
 import { errorHandler } from "./middleware/error.middleware";
-import { notFoundHandler } from "./middleware/notFound.middleware";
+import notFoundHandler from "./middleware/notFound.middleware";
 import userRoutes from "./modules/User/user.route";
 
 const app: Express = express();
