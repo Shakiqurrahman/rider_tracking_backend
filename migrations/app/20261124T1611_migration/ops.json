@@ -1,0 +1,199 @@
+[
+  {
+    "id": "table.Report",
+    "label": "Create table \"Report\"",
+    "summary": "Creates table \"Report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Report\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Report\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Report\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Report\"",
+        "sql": "CREATE TABLE \"public\".\"Report\" (\n  \"cancelledOrders\" int4 NOT NULL,\n  \"createdAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"deliverDate\" date NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"isDeleted\" bool DEFAULT false NOT NULL,\n  \"notes\" text,\n  \"ordersDelivered\" int4 NOT NULL,\n  \"riderId\" uuid NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"totalHours\" int4 NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Report_status_check_a4e4cb09\" CHECK (\"status\" IN ('PENDING', 'COMPLETED', 'REJECTED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Report\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Report\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Report\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.Report.Report_riderId_deliverDate_isDeleted_idx_6455cdcc",
+    "label": "Create index \"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\" on \"Report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Report_riderId_deliverDate_isDeleted_idx_6455cdcc",
+        "table": "Report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\"",
+        "sql": "CREATE INDEX \"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\" ON \"public\".\"Report\" (\"riderId\", \"deliverDate\", \"isDeleted\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\" exists on \"Report\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Report_riderId_deliverDate_isDeleted_idx_6455cdcc\"",
+          "i",
+          "I",
+          "\"public\".\"Report\"",
+          "btree",
+          "[\"riderId\",\"deliverDate\",\"isDeleted\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Report.Report_riderId_idx_966752c5",
+    "label": "Create index \"Report_riderId_idx_966752c5\" on \"Report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Report_riderId_idx_966752c5",
+        "table": "Report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Report_riderId_idx_966752c5\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Report_riderId_idx_966752c5\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Report_riderId_idx_966752c5\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Report_riderId_idx_966752c5\"",
+        "sql": "CREATE INDEX \"Report_riderId_idx_966752c5\" ON \"public\".\"Report\" (\"riderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Report_riderId_idx_966752c5\" exists on \"Report\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Report_riderId_idx_966752c5\"",
+          "i",
+          "I",
+          "\"public\".\"Report\"",
+          "btree",
+          "[\"riderId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Report.Report_riderId_fkey",
+    "label": "Add foreign key \"Report_riderId_fkey\" on \"Report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Report_riderId_fkey",
+        "table": "Report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Report_riderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Report_riderId_fkey",
+          "public",
+          "\"public\".\"Report\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Report_riderId_fkey\" on \"Report\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Report_riderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Report\"\nADD CONSTRAINT \"Report_riderId_fkey\"\nFOREIGN KEY (\"riderId\")\nREFERENCES \"public\".\"Rider\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Report_riderId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Report_riderId_fkey",
+          "public",
+          "\"public\".\"Report\"",
+          "f",
+          "[\"riderId\"]",
+          "\"public\".\"Rider\"",
+          "[\"id\"]",
+          "r",
+          "a"
+        ]
+      }
+    ]
+  }
+]

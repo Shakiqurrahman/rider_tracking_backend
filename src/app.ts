@@ -9,7 +9,7 @@ import { logger } from "./utils/logger";
 
 import { errorHandler } from "./middleware/error.middleware";
 import notFoundHandler from "./middleware/notFound.middleware";
-import userRoutes from "./modules/User/user.route";
+import routes from "./routes/routes";
 
 const app: Express = express();
 
@@ -62,7 +62,7 @@ app.use(
   }),
 );
 
-app.use("/api/users", userRoutes);
+app.use("/api/v1", routes);
 
 app.use(notFoundHandler);
 

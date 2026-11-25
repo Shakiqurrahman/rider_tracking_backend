@@ -14,6 +14,12 @@ enum RIDING_ACCOUNT_STATUS {
   INACTIVE
 }
 
+enum ReportStatus {
+  PENDING
+  COMPLETED
+  REJECTED
+}
+
 model User {
   id        Uuid               @id @onCreate(uuid())
   name      String
@@ -54,12 +60,8 @@ model RidingAccount {
   telephone        String?
   notes            String?
   status           RIDING_ACCOUNT_STATUS     @default(ACTIVE)
-  riderId          Uuid?                   @unique
-  rider   Rider? @relation(
-  fields: [riderId],
-  references: [id],
-  onDelete: Restrict
-)
+  riderId          Uuid?                     @unique
+  rider            Rider?                    @relation(fields: [riderId], references: [id], onDelete: Restrict)
   riderAssignments RidingAccountAssignment[]
 
   createdAt        DateTime                  @default(now()) @onCreate(now())
@@ -81,4 +83,22 @@ model RidingAccountAssignment {
 
   @@index([ridingAccountId, assignedAt])
   @@index([riderId, assignedAt])
+}
+
+model Report {
+  id              Uuid               @id @onCreate(uuid())
+  deliverDate     Date
+  ordersDelivered Int
+  cancelledOrders Int
+  totalHours      Int
+  notes           String?
+  status          ReportStatus       @default(PENDING)
+  riderId         Uuid
+  rider           Rider              @relation(fields: [riderId], references: [id], onDelete: Restrict)
+  isDeleted       Boolean            @default(false)
+
+  createdAt       DateTime           @default(now()) @onCreate(now())
+  updatedAt       temporal.UpdatedAt
+
+  @@index([riderId, deliverDate, isDeleted])
 }

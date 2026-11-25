@@ -23,9 +23,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'3acda02874fa8a3347092986ceafd22e963bed00497793651d6c5c74296738ff'>;
+  StorageHashBase<'d0049e13f8b8ae0e77ccc32ff19beed0103e2a0f69b846f5eccd7e4b692e671b'>;
 export type ExecutionHash =
-  ExecutionHashBase<'bb1b19728d710b7033195c844f6b74f19a1f84c8984cea06972ab234a1750b47'>;
+  ExecutionHashBase<'b0c824b4f2f691fde892d3a8c6657fe819a707edcef5b2fbdf83d5ee1077d750'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -278,6 +278,12 @@ type ParameterizedOutputTypeFunctions = PgParameterizedOutputTypes;
 type FieldTypeOverrides = {
   readonly public: {
     readonly models: {
+      readonly Report: {
+        readonly status: {
+          readonly output: 'PENDING' | 'COMPLETED' | 'REJECTED';
+          readonly input: 'PENDING' | 'COMPLETED' | 'REJECTED';
+        };
+      };
       readonly Rider: {
         readonly status: {
           readonly output: 'ACTIVE' | 'INACTIVE';
@@ -314,6 +320,12 @@ export type FieldInputTypes = FieldTypesFromDomain<
 >;
 type ColumnTypeOverrides = {
   readonly public: {
+    readonly Report: {
+      readonly status: {
+        readonly output: 'PENDING' | 'COMPLETED' | 'REJECTED';
+        readonly input: 'PENDING' | 'COMPLETED' | 'REJECTED';
+      };
+    };
     readonly Rider: {
       readonly status: {
         readonly output: 'ACTIVE' | 'INACTIVE';
@@ -347,6 +359,21 @@ export type StorageColumnInputTypes = ColumnTypesFromStorage<
 >;
 
 export namespace Models {
+  export type public_Report = {
+    cancelledOrders: FieldOutputTypes['public']['Report']['cancelledOrders'];
+    createdAt: FieldOutputTypes['public']['Report']['createdAt'];
+    deliverDate: FieldOutputTypes['public']['Report']['deliverDate'];
+    id: FieldOutputTypes['public']['Report']['id'];
+    isDeleted: FieldOutputTypes['public']['Report']['isDeleted'];
+    notes: FieldOutputTypes['public']['Report']['notes'];
+    ordersDelivered: FieldOutputTypes['public']['Report']['ordersDelivered'];
+    riderId: FieldOutputTypes['public']['Report']['riderId'];
+    status: FieldOutputTypes['public']['Report']['status'];
+    totalHours: FieldOutputTypes['public']['Report']['totalHours'];
+    updatedAt: FieldOutputTypes['public']['Report']['updatedAt'];
+    rider: public_Rider;
+    readonly [RelationKeys]?: 'rider';
+  };
   export type public_Rider = {
     createdAt: FieldOutputTypes['public']['Rider']['createdAt'];
     id: FieldOutputTypes['public']['Rider']['id'];
@@ -404,6 +431,7 @@ export namespace Models {
 
 export declare const models: {
   public: {
+    Report: Models.public_Report;
     Rider: Models.public_Rider;
     RidingAccount: Models.public_RidingAccount;
     RidingAccountAssignment: Models.public_RidingAccountAssignment;
@@ -429,6 +457,117 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly Report: {
+              columns: {
+                readonly cancelledOrders: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+                readonly deliverDate: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly isDeleted: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
+                readonly notes: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly ordersDelivered: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly riderId: {
+                  readonly dataType: 'pg/uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                  readonly many: false;
+                };
+                readonly totalHours: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'Report_riderId_deliverDate_isDeleted_idx_6455cdcc';
+                  readonly prefix: 'Report_riderId_deliverDate_isDeleted_idx';
+                  readonly columns: readonly ['riderId', 'deliverDate', 'isDeleted'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Report_riderId_idx_966752c5';
+                  readonly prefix: 'Report_riderId_idx';
+                  readonly columns: readonly ['riderId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Report';
+                    readonly columns: readonly ['riderId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Rider';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly Rider: {
               columns: {
                 readonly createdAt: {
@@ -791,6 +930,10 @@ type ContractBase = Omit<
             };
           };
           readonly valueSet: {
+            readonly ReportStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'COMPLETED', 'REJECTED'];
+            };
             readonly RIDER_STATUS: {
               readonly kind: 'valueSet';
               readonly values: readonly ['ACTIVE', 'INACTIVE'];
@@ -814,6 +957,7 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
+    readonly Report: { readonly namespace: 'public' & NamespaceId; readonly model: 'Report' };
     readonly Rider: { readonly namespace: 'public' & NamespaceId; readonly model: 'Rider' };
     readonly RidingAccount: {
       readonly namespace: 'public' & NamespaceId;
@@ -829,6 +973,93 @@ type ContractBase = Omit<
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly Report: {
+            readonly fields: {
+              readonly cancelledOrders: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly deliverDate: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly isDeleted: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly ordersDelivered: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly riderId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly totalHours: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+            };
+            readonly relations: {
+              readonly rider: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Rider';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['riderId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Report';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly cancelledOrders: { readonly column: 'cancelledOrders' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly deliverDate: { readonly column: 'deliverDate' };
+                readonly id: { readonly column: 'id' };
+                readonly isDeleted: { readonly column: 'isDeleted' };
+                readonly notes: { readonly column: 'notes' };
+                readonly ordersDelivered: { readonly column: 'ordersDelivered' };
+                readonly riderId: { readonly column: 'riderId' };
+                readonly status: { readonly column: 'status' };
+                readonly totalHours: { readonly column: 'totalHours' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly Rider: {
             readonly fields: {
               readonly createdAt: {
@@ -1182,6 +1413,14 @@ type ContractBase = Omit<
               { readonly name: 'INACTIVE'; readonly value: 'INACTIVE' },
             ];
           };
+          readonly ReportStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
+              { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+            ];
+          };
           readonly USER_ROLE: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -1198,6 +1437,11 @@ type ContractBase = Omit<
           readonly RIDING_ACCOUNT_STATUS: readonly [
             { readonly name: 'ACTIVE'; readonly value: 'ACTIVE' },
             { readonly name: 'INACTIVE'; readonly value: 'INACTIVE' },
+          ];
+          readonly ReportStatus: readonly [
+            { readonly name: 'PENDING'; readonly value: 'PENDING' },
+            { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
+            { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
           ];
           readonly USER_ROLE: readonly [
             { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
@@ -1240,6 +1484,43 @@ type ContractBase = Omit<
     readonly executionHash: ExecutionHash;
     readonly mutations: {
       readonly defaults: readonly [
+        {
+          readonly onCreate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly ref: {
+            readonly entry: 'Report';
+            readonly field: 'createdAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Report';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly onUpdate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly ref: {
+            readonly entry: 'Report';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
         {
           readonly onCreate: {
             readonly id: 'timestampNow';
